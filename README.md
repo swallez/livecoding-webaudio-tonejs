@@ -14,7 +14,7 @@ You can head to https://swallez.github.io/livecoding-webaudio-tonejs/ and start 
 
 To run locally, run `npm run build && npm run serve`: it builds to the `doc` directory and serves it on http://localhost:8080/
 
-If you want to tweak the live-coding environment's code (not the music code, use the live-coding environment for that), run `npm serve-dev`: it starts the live-reloading Webpack server on http://localhost:8080/
+If you want to tweak the live-coding environment's code (not the music code, use the live-coding environment for that), run `npm run serve-dev`: it starts the live-reloading Webpack server on http://localhost:8080/
 
 ### I'm in a hurry! What does it sound like?
 
