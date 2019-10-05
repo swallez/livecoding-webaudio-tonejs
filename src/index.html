@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live coding</title>
+    <style type="text/css">
+        body {
+            font-family: sans-serif;
+            font-size: 14px;
+            margin: 0;
+
+            --bg-color: #EEE;
+            --sep-border: 3px outset #CCC;
+        }
+
+        #dials > * {
+            margin-left: 3px;
+        }
+
+        #transport > * {
+            float: left;
+            /* Nexus-UI colors */
+            color: #333333;
+        }
+
+        #transport > :not(:first-child) {
+            border-left: var(--sep-border);
+        }
+
+        #buffer-control {
+            background-color: var(--bg-color);
+            border-top: var(--sep-border);
+            width: 309px;
+            height: 28px;
+        }
+
+        #buffer-select {
+            font-family: inherit;
+            font-size: inherit;
+            background-color: var(--bg-color);
+            border-color: var(--bg-color);
+            outline: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        #editor {
+            /* Scrollbars occasionally appear when adding Midi controls */
+            overflow: hidden;
+        }
+
+        .nx-active {
+            background-color: rgb(34, 187, 187);
+        }
+
+        .nx-inactive {
+            background-color: var(--bg-color);
+        }
+
+        #metronome.nx-inactive {
+            transition: background-color 250ms linear;
+        }
+
+        .full-height {
+            height: 100%;
+        }
+
+        .inline-children > * {
+            display: inline-block;
+        }
+
+        /* Cool trick from https://codepen.io/edge0703/pen/iHJuA */
+        .vertical-align-children:before {
+            content: "";
+            display: inline-block;
+            vertical-align: middle;
+            height: 100%;
+        }
+
+        .vertical-align-children > * {
+             vertical-align: middle;
+            display: inline-block;
+        }
+
+        #toggles > * {
+            vertical-align: bottom;
+            padding-bottom: 3px;
+            padding-right: 6px;
+        }
+
+        #buttons > * {
+            vertical-align: top;
+            padding-top: 3px;
+            padding-right: 6px;
+        }
+
+        .code-eval {
+            background-color: lightgray;
+        }
+
+        .code-eval-error {
+            background-color: lightcoral;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="header" style="height: 81px">
+        <div id="right-header" style="float:right">
+            <div id="transport">
+                <div id="play-pause"></div>
+                <div id="time">
+                    <div id="metronome" class="nx-inactive vertical-align-children" style="font-size: 160%; width: 50px; height: 50px; text-align: center;">
+                        <div></div>
+                    </div>
+                </div>
+                <div id="scope"></div>
+                <div id="spectr"></div>
+            </div>
+            <div id="buffer-control" style="clear: both">
+                <select id="buffer-select">
+                    <option value=""></option>
+                    <option disabled value="action:">—————————————————</option>
+                    <option value="action:new">New...</option>
+                    <option value="action:delete">Revert...</option>
+                    <option value="action:download">Download...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="controls" class="inline-children full-height">
+            <div id="dials" class="vertical-align-children full-height"></div>
+            <div class="full-height" style="vertical-align: middle">
+                <div id="toggles" class="vertical-align-children" style="height: 50%"></div>
+                <div id="buttons" class="vertical-align-children" style="height: 50%"></div>
+            </div>
+        </div>
+        <div style="border-bottom: 1px solid #E0E0E0; clear: both"></div>
+    </div>
+    <div style="position: absolute; top: 82px; bottom: 0; left: 0; right: 0">
+        <div id="editor" style="width: 100%; height: 100%;"></div>
+    </div>
+</body>
+<script src="index.js"></script>
+</html>
+
