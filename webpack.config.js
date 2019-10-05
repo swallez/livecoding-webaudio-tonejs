@@ -10,7 +10,7 @@ module.exports = {
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'doc') // to publish as GitHub pages
+        path: path.resolve(__dirname, 'docs') // to publish as GitHub pages
     },
     module: {
         rules: [
