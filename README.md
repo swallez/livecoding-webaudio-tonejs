@@ -12,7 +12,7 @@ The editor used is [Monaco editor](https://microsoft.github.io/monaco-editor/), 
 
 You can head to https://swallez.github.io/livecoding-webaudio-tonejs/ and start live-coding/playing! Be patient though, the editor is a bit big and takes time to load.
 
-To run locally, run `npm run build && npm run serve`: it builds to the `doc` directory and serves it on http://localhost:8080/
+To run locally, run `npm run build && npm run serve`: it builds to the `docs` directory and serves it on http://localhost:8080/
 
 If you want to tweak the live-coding environment's code (not the music code, use the live-coding environment for that), run `npm run serve-dev`: it starts the live-reloading Webpack server on http://localhost:8080/
 
@@ -23,3 +23,5 @@ A [teaser for the talk](https://www.youtube.com/watch?v=dQ3fUMdueqs) and the [fi
 ### License
 
 Apache Licence 2.0
+
+By contributing to this repository you implicitly accept your contributions to be licensed under the Apache License 2.0
