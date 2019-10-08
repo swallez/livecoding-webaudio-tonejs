@@ -1,6 +1,6 @@
 ## Live coding music with WebAudio, WebMidi &amp; ToneJS
 
-This is a musical live coding environment built for a talk at [DevFest Toulouse 2019](https://devfesttoulouse.fr/) and the source code used for the talk.
+This is a musical live coding environment built for a talk at [DevFest Toulouse 2019](https://devfesttoulouse.fr/) and the source code used for the talk. The [talk was also recorded](https://www.youtube.com/watch?v=LShM4QzMOxY) (in French).
 
 The goal of this talk is to walk the audience in 45 minutes through the concepts of [WebAudio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) and [ToneJS](https://github.com/Tonejs/Tone.js) and go from a raw oscillator producing a sine wave to a complete song with drums, bass line, pad and lead melody and effects that can be tuned live with a MIDI controller.
 
@@ -18,7 +18,7 @@ If you want to tweak the live-coding environment's code (not the music code, use
 
 ### I'm in a hurry! What does it sound like?
 
-A [teaser for the talk](https://www.youtube.com/watch?v=dQ3fUMdueqs) and the [final track](https://www.youtube.com/watch?v=fBAHuxrnXj0) are on YouTube.
+A [teaser for the talk](https://www.youtube.com/watch?v=dQ3fUMdueqs) and the [final track](https://www.youtube.com/watch?v=fBAHuxrnXj0) are on YouTube. If you understand French (or just want to follow the demo), [watch the talk](https://www.youtube.com/watch?v=LShM4QzMOxY).
 
 ### License
 
