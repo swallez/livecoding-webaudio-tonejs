@@ -93,7 +93,7 @@ editor.addCommand(monaco.KeyCode.Enter + monaco.KeyMod.CtrlCmd + monaco.KeyMod.A
 
 
 let decorations = [];
-
+let evalBlocks = [];
 function evalCode(editor, range) {
     let code = editor.getModel().getValueInRange(range);
 
@@ -115,6 +115,17 @@ function evalCode(editor, range) {
         () => {decorations = editor.deltaDecorations(decorations, [])},
         250
     );
+
+    if (success) {
+        evalBlocks = editor.deltaDecorations([], [{
+            range, options: {
+                linesDecorationsClassName: "code-eval-success"
+            } 
+        }]);
+    }
+    else {
+        editor.deltaDecorations(evalBlocks, []);
+    }
 }
 
 function edit(name, code) {
