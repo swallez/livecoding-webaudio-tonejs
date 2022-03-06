@@ -8,7 +8,7 @@
     "build": "webpack",
     "watch": "webpack --watch",
     "serve-dev": "webpack-dev-server",
-    "serve": "node_modules/.bin/serve -l tcp://localhost:8080 docs"
+    "serve": "node_modules/.bin/serve -l tcp://0.0.0.0:8080 docs"
   },
   "keywords": [],
   "author": "",

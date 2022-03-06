@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+              <title>Not Found</title>
+
+    <link rel="shortcut icon" type="image/x-icon"
+          href="https://addons.mozilla.org/static-server/img/favicon.3cec07462a3d.ico">
+
+    
+        <link title="Firefox Add-ons"
+          rel="search" type="application/opensearchdescription+xml"
+          href="/en-US/firefox/opensearch.xml" />
+
+          <link rel="stylesheet" media="all" href="https://addons.mozilla.org/static-server/css/zamboni/css-min.bf32f72f43df.css" />
+    
+    
+          <link rel="stylesheet" media="all" href="https://addons.mozilla.org/static-server/css/restyle/css-min.09f06041131b.css" />
+    
+    <noscript><link rel="stylesheet" href="https://addons.mozilla.org/static-server/css/legacy/nojs.3c66c75a9e2e.css"></noscript>
+
+    
+    
+    <script src="https://addons.mozilla.org/static-server/js/preload-min.35f26befffbf.js"></script>
+  </head>
+  <body class="html-ltr firefox moz-header-slim  restyle"
+        data-app="firefox"
+        data-appname="Firefox"
+        data-appid="1"
+        data-anonymous="true"
+        data-readonly="false"
+        >
+
+    <div id="main-wrapper">
+                                  <div class="section">
+                  <div class="header-bg">
+            <div class="amo-header-wrapper">
+              <div class="amo-header">
+                <nav id="aux-nav" role="navigation" class="menu-nav c">
+                  <ul>
+                                                                    <li class="account anonymous nomenu login legacy">
+    <a href="https://addons.mozilla.org/api/v5/accounts/login/start/?to=%2Ffirefox%2Fdownloads%2Ffile%2F3918275%2Fsite_permissions_for_swallezgithubio-1.0-an%2Bfx.xpi">Register</a> or <a href="https://addons.mozilla.org/api/v5/accounts/login/start/?to=%2Ffirefox%2Fdownloads%2Ffile%2F3918275%2Fsite_permissions_for_swallezgithubio-1.0-an%2Bfx.xpi">Log in</a>  </li>
+
+                                                                                    <li class="nomenu">
+                        <a class="return" href="/en-US/firefox/">Back to Add-ons</a>
+                      </li>
+                                      </ul>
+                </nav>
+                <div id="masthead">
+                                    <h1 class="site-title">
+<a href="/en-US/firefox/"
+   title="Return to the Firefox Add-ons homepage">
+    <img alt="Firefox" src="https://addons.mozilla.org/static-server/img/icons/firefox.6702242e77d5.png">
+    Add-ons
+  </a>
+</h1>                                                                      </div>
+              </div>
+            </div>           </div>         
+                  <div class="primary" role="main">
+    <h1>We're sorry, but we can't find what you're looking for.</h1> <p> The page or file you requested wasn't found on our site. It's possible that you clicked a link that's out of date, or typed in the address incorrectly. </p> <ul> <li>If you typed in the address, please double check the spelling.</li> <li> If you followed a link from somewhere, please <a href="https://github.com/mozilla/addons/issues/new">file an issue</a>. Tell us where you came from and what you were looking for, and we'll do our best to fix it. </li> </ul> <p>Or you can just jump over to some of the popular pages on our website.</p> <ul> <li>Are you interested in a <a href="/en-US/firefox/extensions/?sort=featured">list of featured add-ons</a>?</li> <li> Do you want to <a href="/en-US/firefox/search/">search for add-ons</a>? You may go to the <a href="/en-US/firefox/search/">search page</a> or just use the search field above. </li> <li> If you prefer to start over, just go to the <a href="/en-US/firefox/">add-ons front page</a>. </li> </ul>  </div>
+      </div>
+      <div id="tooltip">
+        <span></span>
+      </div>
+      <div id="popup-staging">
+                      </div>
+                    <script src="https://addons.mozilla.org/static-server/js/i18n/en-US.976be6c6d735.js"></script>
+        <script src="https://addons.mozilla.org/static-server/js/common-min.b91e7bc4f168.js"></script>
+                          <div id="footer" role="contentinfo">
+          <div class="section">
+                        <img class="footerlogo" src="https://addons.mozilla.org/static-server/img/zamboni/footer-logo-med.4849af1db2c0.png" alt="Footer logo">
+                        <div class="links-footer">
+  <ul>
+    <li>get to know <b>add-ons</b></li>
+    <li><a href="/en-US/about">About</a></li>
+    <li><a href="http://blog.mozilla.com/addons">Blog</a></li>
+    <li class="footer-devhub-link"><a href="/en-US/developers/">Developer Hub</a></li>
+    <li><a href="https://discourse.mozilla-community.org/c/add-ons">Forum</a></li>
+  </ul>
+</div>
+<section class="links-footer-firefox">
+  <ul>
+    <li><a href="https://www.mozilla.org/firefox/?utm_source=addons.mozilla.org&utm_campaign=footer&utm_medium=referral"><b>Firefox</b></a></li>
+    <li><a href="https://www.mozilla.org/firefox/new/?utm_source=addons.mozilla.org&utm_campaign=footer&utm_medium=referral">Download Firefox</a></li>
+    <li><a href="https://www.mozilla.org/firefox/android/?utm_source=addons.mozilla.org&utm_campaign=footer&utm_medium=referral">Android Browser</a></li>
+    <li><a href="https://www.mozilla.org/firefox/ios/?utm_source=addons.mozilla.org&utm_campaign=footer&utm_medium=referral">iOS Browser</a></li>
+    <li><a href="https://www.mozilla.org/firefox/focus/?utm_source=addons.mozilla.org&utm_campaign=footer&utm_medium=referral">Focus Browser</a></li>
+    <li><a href="https://www.mozilla.org/firefox/desktop/?utm_source=addons.mozilla.org&utm_campaign=footer&utm_medium=referral">Desktop Browser</a></li>
+    <li><a href="https://www.mozilla.org/firefox/channel/desktop/?utm_source=addons.mozilla.org&utm_campaign=footer&utm_medium=referral">Beta, Nightly, Developer Edition</a></li>
+  </ul>
+</section>
+<div id="footer-content">
+                <form class="languages go" id="lang_form" method="get" action="" data-no-csrf>
+          <label for="language">Other languages</label>
+          <select id="language" name="lang" dir="ltr">
+            <option value="af">
+                Afrikaans
+              </option><option value="ar">
+                عربي
+              </option><option value="ast">
+                Asturianu
+              </option><option value="az">
+                Azərbaycanca
+              </option><option value="bg">
+                Български
+              </option><option value="bn">
+                বাংলা
+              </option><option value="bs">
+                Bosanski
+              </option><option value="ca">
+                Català
+              </option><option value="cak">
+                Maya Kaqchikel
+              </option><option value="cs">
+                Čeština
+              </option><option value="da">
+                Dansk
+              </option><option value="de">
+                Deutsch
+              </option><option value="dsb">
+                Dolnoserbšćina
+              </option><option value="el">
+                Ελληνικά
+              </option><option value="en-ca">
+                English (Canadian)
+              </option><option value="en-gb">
+                English (British)
+              </option><option value="en-us" selected>
+                English (US)
+              </option><option value="es">
+                Español
+              </option><option value="et">
+                Eesti keel
+              </option><option value="eu">
+                Euskara
+              </option><option value="fa">
+                فارسی
+              </option><option value="fi">
+                suomi
+              </option><option value="fr">
+                Français
+              </option><option value="fy-nl">
+                Frysk
+              </option><option value="ga-ie">
+                Gaeilge
+              </option><option value="gu">
+                ગુજરાતી
+              </option><option value="he">
+                עברית
+              </option><option value="hr">
+                Hrvatski
+              </option><option value="hsb">
+                Hornjoserbsce
+              </option><option value="hu">
+                magyar
+              </option><option value="id">
+                Bahasa Indonesia
+              </option><option value="it">
+                Italiano
+              </option><option value="ja">
+                日本語
+              </option><option value="ka">
+                ქართული
+              </option><option value="kab">
+                Taqbaylit
+              </option><option value="ko">
+                한국어
+              </option><option value="lt">
+                Lietuvių
+              </option><option value="lv">
+                Latviešu
+              </option><option value="mk">
+                Македонски
+              </option><option value="mn">
+                Монгол
+              </option><option value="ms">
+                Melayu
+              </option><option value="mt">
+                Malti
+              </option><option value="nb-no">
+                Norsk bokmål
+              </option><option value="nl">
+                Nederlands
+              </option><option value="nn-no">
+                Norsk nynorsk
+              </option><option value="pa-in">
+                ਪੰਜਾਬੀ (ਭਾਰਤ)
+              </option><option value="pl">
+                Polski
+              </option><option value="pt-br">
+                Português (do Brasil)
+              </option><option value="pt-pt">
+                Português (Europeu)
+              </option><option value="ro">
+                Română
+              </option><option value="ru">
+                Русский
+              </option><option value="sk">
+                slovenčina
+              </option><option value="sl">
+                Slovenščina
+              </option><option value="sq">
+                Shqip
+              </option><option value="sv-se">
+                Svenska
+              </option><option value="te">
+                తెలుగు
+              </option><option value="th">
+                ไทย
+              </option><option value="tr">
+                Türkçe
+              </option><option value="uk">
+                Українська
+              </option><option value="ur">
+                اُردو
+              </option><option value="vi">
+                Tiếng Việt
+              </option><option value="zh-cn">
+                中文 (简体)
+              </option><option value="zh-tw">
+                正體中文 (繁體)
+              </option>          </select>
+                    <noscript><button type="submit">Go</button></noscript>
+        </form>
+            <div id="copyright">
+  <p id="footer-links">
+          <a href="https://www.mozilla.org/privacy/websites/">
+        Privacy Policy
+      </a> &nbsp;|&nbsp;
+      <a href="https://www.mozilla.org/about/legal/">
+        Legal Notices
+      </a> &nbsp;|&nbsp;
+      <a href="https://www.mozilla.org/about/legal/fraud-report/">
+        Report Trademark Abuse
+      </a>
+              &nbsp;|&nbsp;<a href="https://status.mozilla.org">Site Status </a>
+        &nbsp;|&nbsp;<a href="https://addons.mozilla.org/about">Report a bug</a>
+            </p>
+  <p>
+    Except where otherwise <a href="https://www.mozilla.org/about/legal/">noted</a>, content on this site is licensed under the <br /> <a href="https://creativecommons.org/licenses/by-sa/3.0/"> Creative Commons Attribution Share-Alike License v3.0 </a> or any later version.  </p>
+</div>    </div>          </div>         </div>           </div>
+  </body>
+</html>
