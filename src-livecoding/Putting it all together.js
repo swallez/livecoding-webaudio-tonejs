@@ -171,7 +171,7 @@ function chord(chordNo, noteCount) {
     }
     return result;
 }
-
+//
 // Most popular chord progression
 //
 var chords = [1, 5, 6, 4]
@@ -206,7 +206,7 @@ bassDelay.wet.value = 0.2;
 //
 var bassChorus = new Tone.Chorus(4, 0.3, 0.5).connect(bassDelay);
 //
-var bassGuitar = new Tone.PolySynth(6, Tone.MonoSynth, MonoSynth_BassGuitar).connect(bassChorus);
+var bassGuitar = new Tone.PolySynth(Tone.MonoSynth, MonoSynth_BassGuitar).connect(bassChorus);
 
 
 // Check & tune
@@ -228,7 +228,7 @@ var bassProgression = new Tone.Sequence(
 );
 
 // Starts at the next measure
-bassProgression.start(XTone.atMeasure())
+bassProgression.start();
 
 // Stop it for now
 bassProgression.stop()
@@ -290,13 +290,13 @@ var padProgression = new Tone.Sequence(
 );
 
 // Remember to play with filter knobs!
-padProgression.start(XTone.atMeasure())
+padProgression.start()
 
 padProgression.stop()
 
 // Start both bass & pad.
-bassProgression.start(XTone.atMeasure())
-padProgression.start(XTone.atMeasure())
+bassProgression.start()
+padProgression.start()
 
 // Stop them for now
 bassProgression.stop()
@@ -354,30 +354,37 @@ var leadProgression = new Tone.Sequence(
     "1m"
 );
 
-leadProgression.start(XTone.atMeasure())
+leadProgression.start()
 
 leadProgression.stop()
 
 // Start everything. Remember to play with filter knobs!
-bassProgression.start(XTone.atMeasure())
-padProgression.start(XTone.atMeasure())
-leadProgression.start(XTone.atMeasure())
+bassProgression.start()
+padProgression.start()
+leadProgression.start()
 
 
 // Change drums, teak sliders and knobs... Enjoy!
 
+kick.pattern = ""
 kick.pattern = "x"
+kick.pattern = "-x"
 kick.pattern = "x-x-"
 kick.pattern = "x-[xx]-"
+kick.pattern = "-x-[xx]"
 
+bass.pattern = ""
+bass.pattern = "x"
 bass.pattern = "x-"
 bass.pattern = "[xx]-x-[xx]-x-"
 bass.pattern = "[xx]-x-[xx]---"
 
+snare.pattern = ""
 snare.pattern = "-x-[xx]"
 snare.pattern = "-x"
 snare.pattern = "-x-[xx]-x"
 snare.pattern = "-x-[xx][-x]"
 
+openhh.pattern = ""
 openhh.pattern = "[-x][-x]-[xx]"
 

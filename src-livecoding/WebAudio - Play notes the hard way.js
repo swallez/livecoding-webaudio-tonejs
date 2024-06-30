@@ -1,6 +1,6 @@
 // autoexec
-var context = Tone.context.rawContext;
-var master = Tone.Master.input;
+var context = XTone.AudioContext;
+var master = XTone.MasterNode;
 if (!masterFader) {
     var masterFader = new Midi.Slider(19);
     masterFader.connect(master.gain, 0, 1);

@@ -106,13 +106,13 @@ synth.triggerAttackRelease("A4", "2n");
 
 // Fun with conversions (check console)
 
-new Tone.Frequency("A4").toFrequency();
+Tone.Frequency("A4").toFrequency();
 
-new Tone.Frequency("A4").toMidi();
+Tone.Frequency("A4").toMidi();
 
-new Tone.Midi(69).toFrequency();
+Tone.Midi(69).toFrequency();
 
-new Tone.Midi(69).toNote();
+Tone.Midi(69).toNote();
 
 
 
@@ -225,7 +225,7 @@ var compressor = new Tone.Compressor();
 compressor.connect(master);
 
 // Polyphonic synth. Takes care of creating synths and tracking notes
-var psynth = new Tone.PolySynth(10, Tone.Synth, options).connect(compressor);
+var psynth = new Tone.PolySynth(Tone.Synth, options).connect(compressor);
 
 // Accepts an array of notes
 psynth.triggerAttackRelease(["C4", "E4", "G4"], "2n")
@@ -290,14 +290,16 @@ var chords = [
     [65, 67, 71],
 ];
 
+var transpose = -12;
+
 // Play the first chord
-psynth.triggerAttackRelease(chords[0].map(n => new Tone.Midi(n)), "2n")
+psynth.triggerAttackRelease(chords[0].map(n => new Tone.Midi(n + transpose)), "2n")
 
 
 var i = 0;
 Tone.Transport.scheduleRepeat(
     (time) => {
-        psynth.triggerAttackRelease(chords[i].map(n => new Tone.Midi(n)), "2n", time)
+        psynth.triggerAttackRelease(chords[i].map(n => new Tone.Midi(n + transpose)), "2n", time)
         i = (i+1) % chords.length;
     }, "2n"
 )

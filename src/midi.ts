@@ -8,42 +8,226 @@
 //   message parsing.
 // - And reading the code there is some very inefficient code for things I do not need (e.g. controller names)
 
+import * as Tone from "tone"
+
+export function start() {}
+
 /**
  * All MIDI inputs. Updated automatically.
- * @type {Map<string, MIDIInput>}
  */
-const Inputs = new Map();
+export const Inputs: Map<string, WebMidi.MIDIInput> = new Map();
 
 /**
  * All MIDI outputs. Updated automatically.
- * @type {Map<string, MIDIOutput>}
  */
-const Outputs = new Map();
+export const Outputs: Map<string, WebMidi.MIDIOutput> = new Map();
+
+var logEvents: boolean = false;
+
+export function log(v: boolean): void {
+    logEvents = v;
+}
+
+/**
+ */
+function setupListener(input: WebMidi.MIDIInput): WebMidi.MIDIInput {
+    input.onmidimessage = (midiEvent => {
+        let event = parseEvent(midiEvent);
+        MIDI_LISTENERS.dispatchEvent(event);
+    });
+
+    return input;
+}
+
+export class MidiEvent {
+    type: string
+    name?: string
+    channel?: number
+    value?: number
+    number?: number
+    timeStamp: DOMHighResTimeStamp;
+    port: WebMidi.MIDIPort;
+    target: any;
+    data?: Uint8Array;
+}
+
+let MIDI_CHANNEL_MODE_MESSAGES = {
+    120: "allsoundoff",
+    121: "resetallcontrollers",
+    122: "localcontrol",
+    123: "allnotesoff",
+    124: "omnimodeoff",
+    125: "omnimodeon",
+    126: "monomodeon",
+    127: "polymodeon"
+};
+
+function parseEvent(midiEvent: MIDIMessageEvent): MidiEvent {
+    let data = midiEvent.data!;
+    let event: Partial<MidiEvent> = {
+        type: "midimessage"
+    };
+
+    // See https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
+    let msgType = data[0] & 0xF0;
+    if (msgType !== 0xF0) {
+        // A channel message
+        event.channel = data[0] & 0x0F;
+
+        switch (data[0] & 0xF0) {
+            case 0x80:
+                event.type = "noteoff";
+                event.number = data[1];
+                event.value = data[2] / 127;
+                break;
+
+            case 0x90:
+                event.type = "noteon";
+                event.number = data[1];
+                event.value = data[2] / 127;
+
+                // Velocity 0 should be considered as note off. Mostly legacy, but part of the standard
+                if (data[2] === 0) {
+                    event.type = "noteoff";
+                }
+                break;
+
+            case 0xA0:
+                event.type = "keyaftertouch";
+                event.value = data[1] / 127;
+                break;
+
+            case 0xB0:
+                let ctrlNumber = data[1];
+                if (ctrlNumber < 120) {
+                    event.type = "controlchange";
+                    event.number = data[1];
+                    event.value = data[2] / 127;
+                } else {
+                    event.type = "channelmode";
+                    event.number = data[1];
+                    event.name = MIDI_CHANNEL_MODE_MESSAGES[data[1]];
+                    event.value = data[2];
+                }
+                break;
+
+            case 0xC0:
+                event.type = "programchange";
+                event.value = data[1];
+                break;
+
+            case 0xD0:
+                event.type = "channelaftertouch";
+                event.value = data[1] / 127;
+                break;
+
+            case 0xE0:
+                event.type = "pitchbend";
+                event.value = (((data[2] << 7) + data[1]) - 0x2000) / 0x2000;
+                break;
+
+            default:
+                event.type = "unknownchannelmessage";
+        }
+    } else {
+        // System messages
+        switch (data[0]) {
+            case 0xF0:
+                event.type = "sysex";
+                break;
+
+            case 0xF1:
+                event.type = "timecode";
+                event.number = data[1];
+                event.value = data[2];
+                break;
+
+            case 0xF2:
+                event.type = "songposition";
+                event.value = (data[2] << 7) + data[1];
+                break;
+
+            case 0xF3:
+                event.type = "songselect";
+                event.value = data[1];
+                break;
+
+            // F4 & F5: undefined (reserved)
+
+            case 0xF6:
+                event.type = "tuningrequest";
+                break;
+
+            case 0xF7:
+                event.type = "sysexend";
+                break;
+
+            case 0xF8:
+                event.type = "clock";
+                break;
+
+            // FA: undefined (reserved)
+
+            case 0xFA:
+                event.type = "start";
+                break;
+
+            case 0xFB:
+                event.type = "continue";
+                break;
+
+            case 0xFC:
+                event.type = "stop";
+                break;
+
+            // FD: undefined (reserved)
+
+            case 0xFE:
+                event.type = "activesensing";
+                break;
+
+            case 0xFF:
+                event.type = "reset";
+                break;
+
+            default:
+                event.type = "unknownsystemmessage";
+        }
+    }
+
+    // Add these properties at the end so that "more interesting" properties parsed
+    // above appear first in a console.log() call.
+    event.timeStamp = midiEvent.timeStamp;
+    event.target = midiEvent.target;
+    event.data = midiEvent.data ?? undefined;
+
+    return <MidiEvent>event;
+}
 
 async function initMIDI() {
     if (navigator.requestMIDIAccess) {
         try {
             let access = await navigator.requestMIDIAccess()
             // Get lists of available MIDI controllers
-            access.inputs.forEach(input => Inputs.set(input.name, setupListener(input)));
-            access.outputs.forEach(output => Outputs.set(output.name, output));
+            access.inputs.forEach(input => Inputs.set(input.name!, setupListener(input)));
+            access.outputs.forEach(output => Outputs.set(output.name!, output));
 
             access.onstatechange = function (e) {
                 let port = e.port;
                 if (port.type === "input") {
                     if (port.state === "connected") {
-                        Inputs.set(port.name, setupListener(port));
+                        Inputs.set(port.name!, setupListener(<WebMidi.MIDIInput>port));
                     } else {
-                        Inputs.delete(port.name);
+                        Inputs.delete(port.name!);
                     }
                 } else {
-                    if (port.state === "disconnected") {
-                        Outputs.set(port.name, port);
+                    if (port.state === "connected") {
+                        Outputs.set(port.name!, <WebMidi.MIDIOutput>port);
                     } else {
-                        Outputs.delete(port.name);
+                        Outputs.delete(port.name!);
                     }
                 }
-                let event = {
+                let event: MidiEvent = {
                     type: e.type,
                     port: e.port,
                     timeStamp: e.timeStamp,
@@ -52,172 +236,7 @@ async function initMIDI() {
                 MIDI_LISTENERS.dispatchEvent(event);
             };
 
-            /**
-             *
-             * @param input {WebMidi.MIDIInput}
-             * @return {WebMidi.MIDIInput}
-             */
-            function setupListener(input) {
-                input.onmidimessage = (midiEvent => {
-                    let event = parseEvent(midiEvent);
-                    MIDI_LISTENERS.dispatchEvent(event);
-                });
 
-                return input;
-            }
-
-            let MIDI_CHANNEL_MODE_MESSAGES = {
-                120: "allsoundoff",
-                121: "resetallcontrollers",
-                122: "localcontrol",
-                123: "allnotesoff",
-                124: "omnimodeoff",
-                125: "omnimodeon",
-                126: "monomodeon",
-                127: "polymodeon"
-            };
-
-            function parseEvent(midiEvent) {
-                let data = midiEvent.data;
-                let event = {
-                    type: "midimessage"
-                };
-
-                // See https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
-                let msgType = data[0] & 0xF0;
-                if (msgType !== 0xF0) {
-                    // A channel message
-                    event.channel = data[0] & 0x0F;
-
-                    switch (data[0] & 0xF0) {
-                        case 0x80:
-                            event.type = "noteoff";
-                            event.number = data[1];
-                            event.value = data[2] / 127;
-                            break;
-
-                        case 0x90:
-                            event.type = "noteon";
-                            event.number = data[1];
-                            event.value = data[2] / 127;
-
-                            // Velocity 0 should be considered as note off. Mostly legacy, but part of the standard
-                            if (data[2] === 0) {
-                                event.type = "noteoff";
-                            }
-                            break;
-
-                        case 0xA0:
-                            event.type = "keyaftertouch";
-                            event.value = data[1] / 127;
-                            break;
-
-                        case 0xB0:
-                            let ctrlNumber = data[1];
-                            if (ctrlNumber < 120) {
-                                event.type = "controlchange";
-                                event.number = data[1];
-                                event.value = data[2] / 127;
-                            } else {
-                                event.type = "channelmode";
-                                event.number = data[1];
-                                event.name = MIDI_CHANNEL_MODE_MESSAGES[event.number];
-                                event.value = data[2];
-                            }
-                            break;
-
-                        case 0xC0:
-                            event.type = "programchange";
-                            event.value = data[1];
-                            break;
-
-                        case 0xD0:
-                            event.type = "channelaftertouch";
-                            event.value = data[1] / 127;
-                            break;
-
-                        case 0xE0:
-                            event.type = "pitchbend";
-                            event.value = (((data[2] << 7) + data[1]) - 0x2000) / 0x2000;
-                            break;
-
-                        default:
-                            event.type = "unknownchannelmessage";
-                    }
-                } else {
-                    // System messages
-                    switch (data[0]) {
-                        case 0xF0:
-                            event.type = "sysex";
-                            break;
-
-                        case 0xF1:
-                            event.type = "timecode";
-                            event.number = data[1];
-                            event.value = data[2];
-                            break;
-
-                        case 0xF2:
-                            event.type = "songposition";
-                            event.value = (data[2] << 7) + data[1];
-                            break;
-
-                        case 0xF3:
-                            event.type = "songselect";
-                            event.value = data[1];
-                            break;
-
-                        // F4 & F5: undefined (reserved)
-
-                        case 0xF6:
-                            event.type = "tuningrequest";
-                            break;
-
-                        case 0xF7:
-                            event.type = "sysexend";
-                            break;
-
-                        case 0xF8:
-                            event.type = "clock";
-                            break;
-
-                        // FA: undefined (reserved)
-
-                        case 0xFA:
-                            event.type = "start";
-                            break;
-
-                        case 0xFB:
-                            event.type = "continue";
-                            break;
-
-                        case 0xFC:
-                            event.type = "stop";
-                            break;
-
-                        // FD: undefined (reserved)
-
-                        case 0xFE:
-                            event.type = "activesensing";
-                            break;
-
-                        case 0xFF:
-                            event.type = "reset";
-                            break;
-
-                        default:
-                            event.type = "unknownsystemmessage";
-                    }
-                }
-
-                // Add these properties at the end so that "more interesting" properties parsed
-                // above appear first in a console.log() call.
-                event.timeStamp = midiEvent.timeStamp;
-                event.target = midiEvent.target;
-                event.data = midiEvent.data;
-
-                return event;
-            }
         } catch (exc) {
             console.error("Error setting up MIDIAccess", exc);
             if (navigator.userAgent.indexOf("Firefox") >= 0) {
@@ -236,6 +255,7 @@ async function initMIDI() {
 initMIDI();
 
 class MidiListeners {
+    private listenersByType: Map<any, any>;
     constructor() {
         /** @type { Map<string, Set<function>> } */
         this.listenersByType = new Map();
@@ -260,7 +280,7 @@ class MidiListeners {
     }
 
     dispatchEvent(event) {
-        if (Midi.log) console.log("MIDI event", event);
+        if (logEvents) console.log("MIDI event", event);
         this._dispatchEvent(event, event.type);
         this._dispatchEvent(event, 'all');
     }
@@ -281,7 +301,11 @@ const MIDI_LISTENERS = new MidiListeners();
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class MidiBase {
+export class MidiBase {
+    protected options: any;
+    protected _targets: Set<any>;
+    protected _eventTypes: any[];
+    protected _handler: (event) => void;
     constructor(options) {
         this.options = options;
         this._targets = new Set();
@@ -301,9 +325,16 @@ class MidiBase {
             !!(this.options.port && (event.target.name !== this.options.port));
     }
 
+    /**
+     * @param param {AudioParam|function}
+     * @param min {number}
+     * @param max {number}
+     * @param scale {string}
+     */
+    connect(param, min?, max?, scale?): this;
     connect(target) {
         if (this._targets.has(target)) {
-            return;
+            return this;
         }
 
         this._targets.add(target);
@@ -317,7 +348,7 @@ class MidiBase {
         return this;
     }
 
-    disconnect(target) {
+    disconnect(target?) {
         if (target) {
             this._targets.delete(target);
         } else {
@@ -332,7 +363,9 @@ class MidiBase {
     }
 }
 
-class MidiNotes extends MidiBase {
+export class MidiNotes extends MidiBase {
+    private _noteCount: number;
+
     constructor(options) {
         options = options || {};
         options.detune = options.detune || 200;
@@ -365,7 +398,7 @@ class MidiNotes extends MidiBase {
 
             this._targets.forEach(target => {
                 if (target.triggerRelease.length === 2) {
-                    // PolySynth or DrumKit
+                    // Polyphonic instrument, provide frequency (note) to stop
                     target.triggerRelease(freq, Tone.now())
                 } else {
                     if (this._noteCount === 0) {
@@ -385,7 +418,10 @@ class MidiNotes extends MidiBase {
     }
 }
 
-class MidiControl extends MidiBase {
+export class MidiControl extends MidiBase {
+    private _bounds: Map<any, any>;
+    private _number: any;
+    private _lastValue: number;
     constructor(number, options) {
         options = options || {};
         super(options);
@@ -400,13 +436,14 @@ class MidiControl extends MidiBase {
      * @param param {AudioParam|function}
      * @param min {number}
      * @param max {number}
+     * @param scale {string}
      */
-    connect(param, min, max, scale) {
-        this._bounds.set(param, {min: min || 0, max: max || 1.0, scale: scale || "lin"});
+    connect(param: AudioParam, min?:  number, max?: number, scale?: string) {
+        this._bounds.set(param, {min: min ?? 0, max: max ?? 1.0, scale: scale ?? "lin"});
         return super.connect(param);
     }
 
-    disconnect(param) {
+    disconnect(param?) {
         super.disconnect(param);
         if (param) {
             this._bounds.delete(param);
@@ -438,8 +475,10 @@ class MidiControl extends MidiBase {
     }
 }
 
-class MidiToggle extends MidiBase {
-    constructor(number, options) {
+export class ToggleControl extends MidiBase {
+    private _bounds: Map<any, any>;
+    private _number: any;
+    constructor(number, options?) {
         options = options || {};
         super(options);
 
@@ -464,15 +503,10 @@ class MidiToggle extends MidiBase {
     }
 }
 
-const Midi = {
-    Inputs: Inputs,
-    Outputs: Outputs,
-    Notes: MidiNotes,
-    Control: MidiControl,
-    ToggleControl: MidiToggle,
-    dispatchEvent: MidiListeners.prototype.dispatchEvent.bind(MIDI_LISTENERS),
-    addListener: MidiListeners.prototype.addListener.bind(MIDI_LISTENERS),
-    log: false,
-};
+export function dispatchEvent(event) {
+    MIDI_LISTENERS.dispatchEvent(event);
+}
 
-export default Midi;
+export function addListener(eventType, listener) {
+    MIDI_LISTENERS.addListener(eventType, listener);
+}

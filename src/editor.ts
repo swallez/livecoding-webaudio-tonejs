@@ -1,6 +1,15 @@
 import * as monaco from "monaco-editor";
 import _ from "lodash";
 
+import { renderMarkdown} from "monaco-editor/esm/vs/base/browser/markdownRenderer"
+// const htmlResult = renderMarkdown({
+//     value: samplemarkdownData
+// }).innerHTML;
+
+export function start() {
+
+}
+
 let storageName = "code:Default";
 
 ["Tone.d.ts", "WebMIDI.d.ts"].forEach((name) => {
@@ -9,7 +18,8 @@ let storageName = "code:Default";
     }));
 });
 
-let editorElt = document.getElementById("editor");
+let editorElt = document.getElementById("editor")!;
+
 let editor = monaco.editor.create(editorElt, {
     value: "",
     language: "javascript",
@@ -22,8 +32,8 @@ let editor = monaco.editor.create(editorElt, {
 //     editor.layout()
 // }, 250);
 
-window.editor = editor;
-window.monaco = monaco;
+(<any>window).editor = editor;
+(<any>window).monaco = monaco;
 
 
 // I'm an IntelliJ user and want to use my muscle memory during the presentation rather than struggle with
@@ -32,12 +42,28 @@ window.monaco = monaco;
 //
 if (localStorage.getItem("use-intellij-bindings")) {
     // Custom (IntelliJ-like) custom bindings. Actions are visible in editor._actions (and pasted at the end of this file)
-    let srv = editor._standaloneKeybindingService;
-    srv.addDynamicKeybinding("editor.action.copyLinesDownAction", monaco.KeyCode.KEY_D + monaco.KeyMod.CtrlCmd);
-    srv.addDynamicKeybinding("editor.action.deleteLines", monaco.KeyCode.Backspace + monaco.KeyMod.CtrlCmd);
-    srv.addDynamicKeybinding("editor.action.commentLine", monaco.KeyCode.KEY_C + monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift);
-    srv.addDynamicKeybinding("editor.action.showHover", monaco.KeyCode.F1);
-    srv.addDynamicKeybinding("editor.action.quickCommand", monaco.KeyCode.KEY_P + monaco.KeyMod.CtrlCmd);
+    monaco.editor.addKeybindingRules([
+        {
+            command: "editor.action.copyLinesDownAction",
+            keybinding: monaco.KeyCode.KeyD + monaco.KeyMod.CtrlCmd,
+        },
+        {
+            command: "editor.action.deleteLines",
+            keybinding: monaco.KeyCode.Backspace + monaco.KeyMod.CtrlCmd
+        },
+        {
+            command: "editor.action.commentLine",
+            keybinding: monaco.KeyCode.KeyC + monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift
+        },
+        {
+            command: "editor.action.showHover",
+            keybinding: monaco.KeyCode.F1
+        },
+        {
+            command: "editor.action.quickCommand",
+            keybinding: monaco.KeyCode.KeyP + monaco.KeyMod.CtrlCmd
+        }
+    ]);
 }
 
 // Auto save editor content every second
@@ -70,25 +96,27 @@ function getBlockRange(editor, selectionStartLine, selectionEndLine) {
 
 // Run block on cmd/ctrl+enter
 editor.addCommand(monaco.KeyCode.Enter + monaco.KeyMod.CtrlCmd, function() {
-
     let selection = editor.getSelection();
-    let range = getBlockRange(editor, selection.startLineNumber, selection.endLineNumber);
-
-    evalCode(editor, range);
+    if (selection) {
+        let range = getBlockRange(editor, selection.startLineNumber, selection.endLineNumber);
+        evalCode(editor, range);
+    }
 });
 
 // Run selected lines on cmd/ctrl+enter
 editor.addCommand(monaco.KeyCode.Enter + monaco.KeyMod.CtrlCmd + monaco.KeyMod.Alt, function() {
 
     let selection = editor.getSelection();
-    let model = editor.getModel();
+    let model = editor.getModel()!;
 
-    let range = new monaco.Range(
-        selection.startLineNumber, 1,
-        selection.endLineNumber, model.getLineMaxColumn(selection.endLineNumber)
-    );
+    if (selection) {
+        let range = new monaco.Range(
+            selection.startLineNumber, 1,
+            selection.endLineNumber, model.getLineMaxColumn(selection.endLineNumber)
+        );
 
-    evalCode(editor, range);
+        evalCode(editor, range);
+    }
 });
 
 

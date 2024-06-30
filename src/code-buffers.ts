@@ -3,14 +3,18 @@
  */
 
 import Editor from "./editor";
-import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import JSZip from "jszip";
+
+export function start() {
+}
 
 /**
  * Built-in code buffers for the live demo talk.
  * Users can also add local buffers.
  */
 let serverSources = [
+    "Welcome",
     "Make some noise!",
     "WebAudio - Play notes the hard way",
     "ToneJS - Play notes the easy way",
@@ -20,13 +24,15 @@ let serverSources = [
 ];
 
 /** @type {HTMLSelectElement} */
-let bufferSelect = document.getElementById("buffer-select");
-let deleteOption = bufferSelect.querySelector("option[value='action:delete']");
+// @ts-ignore
+let bufferSelect: HTMLSelectElement = document.getElementById("buffer-select");
+// @ts-ignore
+let deleteOption: HTMLOptionElement = bufferSelect?.querySelector("option[value='action:delete']");
 
 let allBuffers = listBuffers();
 
 const CURRENT_BUFFER_KEY = "buffer:current";
-let currentBuffer = window.localStorage.getItem(CURRENT_BUFFER_KEY);
+let currentBuffer = window.localStorage.getItem(CURRENT_BUFFER_KEY) || "";
 if (!allBuffers.includes(currentBuffer)) {
     currentBuffer = allBuffers[0];
 }
@@ -40,9 +46,12 @@ loadBuffer(currentBuffer, true);
  * @return {Array<string>} sorted list of buffers
  */
 function listBuffers() {
-    let localSources = new Set();
+    let localSources: Set<string> = new Set();
     for (let i = 0; i < window.localStorage.length; i++) {
-        let key = window.localStorage.key(i);
+        for (let localStorageKey in window.localStorage) {
+
+        }
+        let key = window.localStorage.key(i) ?? "";
         if (key.startsWith("code:")) {
             localSources.add(key.substring("code:".length));
         }
@@ -61,7 +70,7 @@ function fillSelect() {
 
     // Remove all buffer names and keep actions
     let choices = bufferSelect.options;
-    while (!choices.item(0).value.startsWith("action:")) {
+    while (!choices.item(0)?.value.startsWith("action:")) {
         choices.remove(0)
     }
 
@@ -90,6 +99,7 @@ let actions = {
 };
 
 bufferSelect.onchange = function(evt) {
+    // @ts-ignore
     let value = evt.target.value;
 
     if (value.startsWith("action:")) {
@@ -133,6 +143,7 @@ function download() {
     allBuffers.forEach(name => {
         let code = window.localStorage.getItem("code:" + name);
         if (code) {
+            // @ts-ignore
             folder.file(name + ".js", code);
         }
     });
@@ -149,7 +160,7 @@ function checkResponseOk(response) {
     return response;
 }
 
-function loadBuffer(name, reload) {
+function loadBuffer(name: string, reload?: boolean) {
     bufferSelect.value = name;
     if (currentBuffer === name && !reload) {
         return;
@@ -181,8 +192,3 @@ function loadBuffer(name, reload) {
         }
     }
 }
-
-const exports = {
-};
-
-export default exports;

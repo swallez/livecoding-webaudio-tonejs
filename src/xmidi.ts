@@ -1,129 +1,47 @@
+import * as Midi from './midi';
+import * as Nexus from 'nexusui';
+import svg from "nexusui/lib/util/svg";
 import * as Tone from "tone";
 import XTone from "./xtone";
-import Midi from "./midi";
-import * as Nexus from "nexusui";
-import * as CodeBuffers from "./code-buffers";
-
-import svg from "../node_modules/nexusui/lib/util/svg";
-
-window.Tone = Tone;
-window.XTone = XTone;
-window.Midi = Midi;
-window.Nexus = Nexus;
-
-Nexus.context = Tone.context;
-
-//-------------------------------------------------------------------------------------------------
-// Transport
-
-let play = new Nexus.TextButton("#play-pause", {
-    'size': [50,50],
-    'state': false,
-    'text': '▶',
-    'alternateText': '‖',
-});
-
-play.on("change", (state) => {
-    if (state) {
-        Tone.Transport.start();
-    } else {
-        Tone.Transport.pause();
-    }
-});
-
-function updatePlayState(state) {
-    if (play.state !== state) {
-        play.state = state;
-    }
-}
-
-Tone.Transport.on("start", () => updatePlayState(true));
-Tone.Transport.on("stop", () => updatePlayState(false));
-Tone.Transport.on("pause", () => updatePlayState(false));
-
-updatePlayState(Tone.Transport.state === "started");
-
-//-------------------------------------------------------------------------------------------------
-// Metronome
-
-let metroSounds = new Tone.Players({
-    beat: "/assets/metronome/synth-beat.wav",
-    measure: "/assets/metronome/synth-measure.wav"
-}).toMaster();
-
-let metro = document.getElementById("metronome");
-let metroText = metro.querySelector("div");
-metroText.textContent = '●○ ';
-
-
-let playTicks = false;
-metro.onclick = () => { playTicks = ! playTicks };
-
-let odd = true;
-Tone.Transport.scheduleRepeat((time) => {
-    odd = !odd;
-
-    let ttime = new Tone.TransportTime(Tone.Transport.seconds);
-
-    // Extracted from Tone.Time.prototype.toBarsBeatsSixteenths
-    let quarterTime = ttime._beatsToUnits(1);
-    let quarters = ttime.valueOf() / quarterTime;
-    let measures = Math.floor(quarters / ttime._getTimeSignature());
-    quarters = Math.floor(quarters) % ttime._getTimeSignature();
-
-    if (playTicks) {
-        metroSounds.get(quarters === 0 ? "measure" : "beat").start(time);
-    }
-
-    Tone.Draw.schedule(() => {
-        metroText.textContent = odd ? '○● ' : '●○ ';
-        //metroText.textContent = odd ? '◯⬤' : '⬤◯';
-        if (quarters === 0) {
-            metro.classList.remove("nx-inactive");
-            metro.classList.add("nx-active");
-            window.requestAnimationFrame(() => {
-                metro.classList.remove("nx-active");
-                metro.classList.add("nx-inactive");
-            })
-        }
-    });
-}, "4n", "@1m");
-
-// Exposed to allow changing metronome attributes (e.g. volume)
-XTone.Metronome = {
-    start: () => playTicks = true,
-    stop: () => playTicks = false,
-};
-
-//-------------------------------------------------------------------------------------------------
-// Meter, scope, spectrogram
-
-let osc = new Nexus.Oscilloscope("#scope", {
-    'size': [100,50],
-});
-osc.connect(Tone.Master);
-
-let spectr = new Nexus.Spectrogram("#spectr", {
-    'size': [100,50],
-});
-spectr.connect(Tone.Master);
+import {MidiNotes} from "./midi";
 
 //-------------------------------------------------------------------------------------------------
 // Visual MIDI control
 
+export function start() {}
+
 class BaseMidiControl {
-    constructor() {
+    protected _ui: any;
+    protected _control: Midi.MidiBase;
+    protected _target?: any;
+
+    constructor(control: Midi.MidiBase) {
         this._ui = undefined;
-        /** @type {Midi.Control} */
-        this._control = undefined;
+        this._control = control;
     }
 
     // Forward methods to Nexus dial & Midi control
-    connect(target) { this._control.connect(target); }
-    disconnect(target) {
-        this._control.disconnect(target);
-        if (!target) { this._control.connect(this._ui) } // reconnect ui
+    connect(target, min, max) {
+        this._control.connect(target, min, max);
+        if (this._target) {
+            this._control.disconnect(this._target);
+        }
+        this._target = target;
     }
+
+    disconnect() {
+        if (this._target) {
+            this._control.disconnect(this._target);
+            this._control.connect(this._ui); // reconnect ui
+            this._target = null;
+        }
+    }
+
+    // disconnect(target) {
+    //     this._control.disconnect(target);
+    //     if (!target) { this._control.connect(this._ui) } // reconnect ui
+    // }
+
     set value(value) { this._ui.value = value; }
     get value() { return this._ui.value; }
 
@@ -134,10 +52,10 @@ class BaseMidiControl {
 }
 
 class MidiDial extends BaseMidiControl {
+
     constructor(number, options) {
-        super();
+        super(new Midi.MidiControl(number, options));
         this._ui = Nexus.add("Dial", "#dials", { size: [60, 60]});
-        this._control = new Midi.Control(number, options);
         this._control.connect(this._ui);
 
         // Publish a synthetic midi event on change.
@@ -148,16 +66,15 @@ class MidiDial extends BaseMidiControl {
         });
     }
 
-    connect(target, min, max) {
-        this._control.connect(target, min, max);
-    }
+    // connect(target, min, max) {
+    //     this._control.connect(target, min, max);
+    // }
 }
 
 class MidiSlider extends BaseMidiControl {
     constructor(number, options) {
-        super();
+        super(new Midi.MidiControl(number, options));
         this._ui = Nexus.add("Slider", "#dials", {size: [20, 70], mode: 'absolute'});
-        this._control = new Midi.Control(number, options);
         this._control.connect(this._ui);
 
         // Publish a synthetic midi event on change.
@@ -168,16 +85,15 @@ class MidiSlider extends BaseMidiControl {
         });
     }
 
-    connect(target, min, max) {
-        this._control.connect(target, min, max);
-    }
+    // connect(target, min, max) {
+    //     this._control.connect(target, min, max);
+    // }
 }
 
 class MidiToggle extends BaseMidiControl {
     constructor(number) {
-        super();
+        super(new Midi.ToggleControl(number));
         this._ui = Nexus.add("Button", "#toggles", { mode: "toggle", size: [30, 30] });
-        this._control = new Midi.ToggleControl(number);
         this._control.connect({
             start: () => {this._ui.turnOn(false)},
             stop: () => {this._ui.turnOff(false)},
@@ -193,10 +109,9 @@ class MidiToggle extends BaseMidiControl {
 }
 
 class MidiButton extends BaseMidiControl {
-    constructor(number, position) {
-        super();
+    constructor(number) {
+        super(new Midi.ToggleControl(number));
         this._ui = Nexus.add("Button", "#buttons", { mode: "button", size: [30, 30] });
-        this._control = new Midi.ToggleControl(number);
         this._control.connect({
             start: () => {this._ui.turnOn(false)},
             stop: () => {this._ui.turnOff(false)},
@@ -244,11 +159,22 @@ Nexus.Button.prototype.render = function() {
 
 //----- Add our UI+control widgets to midi
 
-Midi.Dial = MidiDial;
-Midi.Button = MidiButton;
-Midi.Toggle = MidiToggle;
-Midi.Slider = MidiSlider;
-Midi.Fader = MidiSlider;
+const Exports = {
+    Dial: MidiDial,
+    Button: MidiButton,
+    Toggle: MidiToggle,
+    Slider: MidiSlider,
+    Fader: MidiSlider,
+    Inputs: Midi.Inputs,
+    Notes: MidiNotes,
+    log: Midi.log,
+    addListener: Midi.addListener,
+};
+
+export default Exports;
+
+(<any>window).Midi = Exports;
+
 
 // and wire the transport and metronome buttons
 // (this is my Korg nanoKontrol's config)

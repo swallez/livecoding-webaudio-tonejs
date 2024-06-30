@@ -61,7 +61,7 @@ MonoSynth_BassGuitar = {
 };
 
 // Create some effects to give depth to the sound
-var feedbackDelay = new Tone.FeedbackDelay("16n", 0.2).toMaster();
+var feedbackDelay = new Tone.FeedbackDelay("16n", 0.2).toDestination();
 feedbackDelay.wet.value = 0.2;
 //
 var chorus = new Tone.Chorus(4, 0.3, 0.5).connect(feedbackDelay);
@@ -153,7 +153,7 @@ console.log(chord(2, 3))
 // We need a polyphonic synth to play chords!
 //
 var compressor = new Tone.Compressor().connect(master);
-var psynth = new Tone.PolySynth(6, Tone.MonoSynth, MonoSynth_BassGuitar).connect(compressor);
+var psynth = new Tone.PolySynth(Tone.MonoSynth, MonoSynth_BassGuitar).connect(compressor);
 
 // Play a chord progression
 
