@@ -1,3 +1,6 @@
 .idea
 *.iml
 node_modules/
+
+# Result of tsc compilation
+src/*.js

@@ -3,7 +3,7 @@ var context = Tone.context;
 var master = Tone.Master;
 Tone.Transport.start();
 if (!masterFader) {
-    var masterFader = new Midi.Slider(19);
+    var masterFader = new Midi.MasterFader(19);
     masterFader.connect(master.volume, -50, 10);
 }
 
@@ -96,16 +96,14 @@ var drumOutput = reverb;
 var kickSound = new Tone.Player("assets/drums/kick.wav").connect(drumOutput);
 var bassSound = new Tone.Player("assets/drums/bass.wav").connect(drumOutput);
 var snareSound = new Tone.Player("assets/drums/snare.wav").connect(drumOutput);
-var openhhSound = new Tone.Player("assets/drums/oh.wav").connect(drumOutput);
-var closehhSound = new Tone.Player("assets/drums/ch.wav").connect(drumOutput);
+var hihatSound = new Tone.Player("assets/drums/oh.wav").connect(drumOutput);
 //
 // and sequence all the things
 //
 var kick = new XTone.BeatSequence(kickSound);
 var bass = new XTone.BeatSequence(bassSound);
 var snare = new XTone.BeatSequence(snareSound);
-var openhh = new XTone.BeatSequence(openhhSound);
-var closehh = new XTone.BeatSequence(closehhSound);
+var hihat = new XTone.BeatSequence(hihatSound);
 
 // Add buttons to start/stop sequences
 // (remember to start them)
@@ -113,8 +111,7 @@ var closehh = new XTone.BeatSequence(closehhSound);
 var toggle1 = new Midi.Toggle(21).connect(kick);
 var toggle2 = new Midi.Toggle(22).connect(bass);
 var toggle3 = new Midi.Toggle(23).connect(snare);
-var toggle4 = new Midi.Toggle(24).connect(openhh);
-var toggle5 = new Midi.Toggle(25).connect(closehh);
+var toggle4 = new Midi.Toggle(24).connect(hihat);
 
 // Check
 kickSound.start()
@@ -135,9 +132,7 @@ snare.pattern = "-x"
 snare.pattern = "-x-[xx]-x"
 snare.pattern = "-x-[xx][-x]"
 
-openhh.pattern = "[-x][-x]-[xx]"
-
-closehh.pattern = "[XX]-X-"
+hihat.pattern = "[-x][-x]-[xx]"
 
 
 
@@ -171,7 +166,7 @@ function chord(chordNo, noteCount) {
     }
     return result;
 }
-
+//
 // Most popular chord progression
 //
 var chords = [1, 5, 6, 4]
@@ -206,7 +201,7 @@ bassDelay.wet.value = 0.2;
 //
 var bassChorus = new Tone.Chorus(4, 0.3, 0.5).connect(bassDelay);
 //
-var bassGuitar = new Tone.PolySynth(6, Tone.MonoSynth, MonoSynth_BassGuitar).connect(bassChorus);
+var bassGuitar = new Tone.PolySynth(Tone.MonoSynth, MonoSynth_BassGuitar).connect(bassChorus);
 
 
 // Check & tune
@@ -228,7 +223,7 @@ var bassProgression = new Tone.Sequence(
 );
 
 // Starts at the next measure
-bassProgression.start(XTone.atMeasure())
+bassProgression.start();
 
 // Stop it for now
 bassProgression.stop()
@@ -290,13 +285,13 @@ var padProgression = new Tone.Sequence(
 );
 
 // Remember to play with filter knobs!
-padProgression.start(XTone.atMeasure())
+padProgression.start()
 
 padProgression.stop()
 
 // Start both bass & pad.
-bassProgression.start(XTone.atMeasure())
-padProgression.start(XTone.atMeasure())
+bassProgression.start()
+padProgression.start()
 
 // Stop them for now
 bassProgression.stop()
@@ -354,30 +349,42 @@ var leadProgression = new Tone.Sequence(
     "1m"
 );
 
-leadProgression.start(XTone.atMeasure())
+leadProgression.start()
 
 leadProgression.stop()
 
 // Start everything. Remember to play with filter knobs!
-bassProgression.start(XTone.atMeasure())
-padProgression.start(XTone.atMeasure())
-leadProgression.start(XTone.atMeasure())
+bassProgression.start()
+padProgression.start()
+leadProgression.start()
 
 
 // Change drums, teak sliders and knobs... Enjoy!
 
+kick.pattern = ""
 kick.pattern = "x"
+kick.pattern = "-x"
 kick.pattern = "x-x-"
 kick.pattern = "x-[xx]-"
+kick.pattern = "-x-[xx]"
 
+bass.pattern = ""
+bass.pattern = "x"
 bass.pattern = "x-"
 bass.pattern = "[xx]-x-[xx]-x-"
 bass.pattern = "[xx]-x-[xx]---"
 
+snare.pattern = ""
 snare.pattern = "-x-[xx]"
 snare.pattern = "-x"
 snare.pattern = "-x-[xx]-x"
 snare.pattern = "-x-[xx][-x]"
 
+openhh.pattern = ""
 openhh.pattern = "[-x][-x]-[xx]"
 
+bassProgression.stop()
+
+padProgression.stop()
+
+leadProgression.stop()

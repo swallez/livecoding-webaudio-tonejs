@@ -3,7 +3,7 @@ var context = Tone.context;
 var master = Tone.Master;
 Tone.Transport.start()
 if (!masterFader) {
-    var masterFader = new Midi.Slider(19);
+    var masterFader = new Midi.MasterFader(19);
     masterFader.connect(master.volume, -50, 10);
     master.volume = -8;
 }
@@ -61,7 +61,7 @@ MonoSynth_BassGuitar = {
 };
 
 // Create some effects to give depth to the sound
-var feedbackDelay = new Tone.FeedbackDelay("16n", 0.2).toMaster();
+var feedbackDelay = new Tone.FeedbackDelay("16n", 0.2).toDestination();
 feedbackDelay.wet.value = 0.2;
 //
 var chorus = new Tone.Chorus(4, 0.3, 0.5).connect(feedbackDelay);
@@ -132,6 +132,8 @@ loop.loop = false;
 // Some chords are super popular: https://www.hooktheory.com/theorytab/common-chord-progressions
 //
 // and even have their Wikipedia page https://en.wikipedia.org/wiki/List_of_songs_containing_the_I%E2%80%93V%E2%80%93vi%E2%80%93IV_progression
+//
+// The hilarious 4 chords song: https://www.youtube.com/watch?v=5pidokakU4I
 
 
 // Chords are built by picking every other note in the scale.
@@ -153,7 +155,7 @@ console.log(chord(2, 3))
 // We need a polyphonic synth to play chords!
 //
 var compressor = new Tone.Compressor().connect(master);
-var psynth = new Tone.PolySynth(6, Tone.MonoSynth, MonoSynth_BassGuitar).connect(compressor);
+var psynth = new Tone.PolySynth(Tone.MonoSynth, MonoSynth_BassGuitar).connect(compressor);
 
 // Play a chord progression
 
@@ -163,9 +165,9 @@ var progression = new Tone.Sequence(
             chord(n, 3).map(v => new Tone.Midi(60 + v)),
             "1n", time);
     },
-    // [1, 2, 3, 4, 5, 6, 7],
+    //[1, 2, 3, 4, 5, 6, 7],
+    //[1, 4, 5, 1],
     [1, 5, 6, 4], // Most popular
-    // [1, 4, 5, 1],
     "1n"
 );
 progression.loop = false;
@@ -209,10 +211,18 @@ var arp = new Tone.Pattern(
 arp.interval = "8n"   // Scheduling rate
 arp.probability = 1 // Probability of playing a note
 
-arp.start(XTone.atMeasure())
-
 arp.start()
 
 arp.stop()
 
 // "randomWalk" can be also "up" "down" "upDown" "downUp" "alternateUp" "alternateDown" "random" "randomOnce"
+
+arp.pattern = "randomWalk"
+arp.pattern = "up"
+arp.pattern = "down"
+arp.pattern = "upDown"
+arp.pattern = "downUp"
+arp.pattern = "alternateUp"
+arp.pattern = "alternateDown"
+arp.pattern = "random"
+arp.pattern = "randomOnce"

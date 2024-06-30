@@ -2,7 +2,7 @@
 var context = Tone.context;
 var master = Tone.Master;
 if (!masterFader) {
-    var masterFader = new Midi.Slider(19);
+    var masterFader = new Midi.MasterFader(19);
     masterFader.connect(master.volume, -50, 10); // Volume in dB
 }
 
@@ -106,13 +106,13 @@ synth.triggerAttackRelease("A4", "2n");
 
 // Fun with conversions (check console)
 
-new Tone.Frequency("A4").toFrequency();
+Tone.Frequency("A4").toFrequency();
 
-new Tone.Frequency("A4").toMidi();
+Tone.Frequency("A4").toMidi();
 
-new Tone.Midi(69).toFrequency();
+Tone.Midi(69).toFrequency();
 
-new Tone.Midi(69).toNote();
+Tone.Midi(69).toNote();
 
 
 
@@ -192,7 +192,7 @@ synth.portamento = 0.1;
 
 // Slide the glide, because why not?
 
-var portaSlider = new Midi.Slider(11);
+var portaSlider = new Midi.Fader(11);
 portaSlider.connect((v) => synth.portamento = v, 0, 0.5)
 
 
@@ -225,7 +225,7 @@ var compressor = new Tone.Compressor();
 compressor.connect(master);
 
 // Polyphonic synth. Takes care of creating synths and tracking notes
-var psynth = new Tone.PolySynth(10, Tone.Synth, options).connect(compressor);
+var psynth = new Tone.PolySynth(Tone.Synth, options).connect(compressor);
 
 // Accepts an array of notes
 psynth.triggerAttackRelease(["C4", "E4", "G4"], "2n")
@@ -290,14 +290,16 @@ var chords = [
     [65, 67, 71],
 ];
 
+var transpose = -12;
+
 // Play the first chord
-psynth.triggerAttackRelease(chords[0].map(n => new Tone.Midi(n)), "2n")
+psynth.triggerAttackRelease(chords[0].map(n => new Tone.Midi(n + transpose)), "2n")
 
 
 var i = 0;
 Tone.Transport.scheduleRepeat(
     (time) => {
-        psynth.triggerAttackRelease(chords[i].map(n => new Tone.Midi(n)), "2n", time)
+        psynth.triggerAttackRelease(chords[i].map(n => new Tone.Midi(n + transpose)), "2n", time)
         i = (i+1) % chords.length;
     }, "2n"
 )
@@ -308,9 +310,9 @@ Tone.Transport.start()
 Tone.Transport.bpm.value = 80
 
 // Stop it
-Tone.Transport.cancel()
+Tone.Transport.pause()
 
-
+Tone.Transport.start()
 
 
 
@@ -335,9 +337,8 @@ Tone.Transport.cancel()
 
 // Experiment with speed
 var tempoSlider = new Midi.Slider(12)
-
+//
 tempoSlider.connect(Tone.Transport.bpm, 50, 300)
-tempoSlider.connect(console.log, 50, 300)
 
 
 
@@ -369,5 +370,5 @@ dial1.connect(filter.frequency, 100, 2000, "exp")
 dial2.connect(filter.Q, 0, 100);
 
 // kthxby
-Tone.Transport.cancel()
+Tone.Transport.stop()
 

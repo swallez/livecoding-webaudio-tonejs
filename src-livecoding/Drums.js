@@ -2,10 +2,9 @@
 var context = Tone.context;
 var master = Tone.Master;
 if (!masterFader) {
-    var masterFader = new Midi.Slider(19);
+    var masterFader = new Midi.MasterFader(19);
     masterFader.connect(master.volume, -50, 10);
 }
-
 
 
 
@@ -56,8 +55,7 @@ var drumGain = new Tone.Gain().connect(master);
 var kickSound = new Tone.Player("assets/drums/kick.wav").connect(drumGain);
 var bassSound = new Tone.Player("assets/drums/bass.wav").connect(drumGain);
 var snareSound = new Tone.Player("assets/drums/snare.wav").connect(drumGain);
-var openhhSound = new Tone.Player("assets/drums/oh.wav").connect(drumGain);
-var closehhSound = new Tone.Player("assets/drums/ch.wav").connect(drumGain);
+var hihatSound = new Tone.Player("assets/drums/oh.wav").connect(drumGain);
 
 // Play them!
 
@@ -67,9 +65,8 @@ bassSound.start();
 
 snareSound.start();
 
-openhhSound.start();
+hihatSound.start();
 
-closehhSound.start();
 
 
 
@@ -205,8 +202,7 @@ kick.stop()
 //
 var bass = new XTone.BeatSequence(bassSound);
 var snare = new XTone.BeatSequence(snareSound);
-var openhh= new XTone.BeatSequence(openhhSound);
-var closehh= new XTone.BeatSequence(closehhSound);
+var hihat= new XTone.BeatSequence(hihatSound);
 
 // Add buttons to start/stop sequences
 // Beware: they all start stopped, so click on those buttons!
@@ -214,8 +210,7 @@ var closehh= new XTone.BeatSequence(closehhSound);
 var toggle1 = new Midi.Toggle(21).connect(kick);
 var toggle2 = new Midi.Toggle(22).connect(bass);
 var toggle3 = new Midi.Toggle(23).connect(snare);
-var toggle4 = new Midi.Toggle(24).connect(openhh);
-var toggle5 = new Midi.Toggle(25).connect(closehh);
+var toggle4 = new Midi.Toggle(24).connect(hihat);
 
 
 
@@ -249,8 +244,7 @@ snare.pattern = "-x"
 snare.pattern = "-x-[xx]-x"
 snare.pattern = "-x-[xx][-x]"
 
-openhh.pattern = "[-x][-x]-[xx]"
+hihat.pattern = "[-x][-x]-[xx]"
 
-closehh.pattern = "[XX]-X-"
 
 

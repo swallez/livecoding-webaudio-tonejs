@@ -1,8 +1,8 @@
 // autoexec
-var context = Tone.context.rawContext;
-var master = Tone.Master.input;
+var context = XTone.AudioContext;
+var master = XTone.MasterNode;
 if (!masterFader) {
-    var masterFader = new Midi.Slider(19);
+    var masterFader = new Midi.MasterFader(19);
     masterFader.connect(master.gain, 0, 1);
 }
 
@@ -60,7 +60,7 @@ var synth = {};
 //
 synth.triggerAttack = function (note) {
     if (!runningNotes[note]) {
-        let osc = new OscillatorNode(context);
+        let osc = context.createOscillator(context);
         osc.type = "sawtooth";
         osc.connect(synthOutput);
         //
@@ -108,10 +108,10 @@ Midi.addListener('noteoff', evt => synth.triggerRelease(evt.number))
 synth.triggerAttack = function (note) {
     if (!runningNotes[note]) {
         //
-        let envelope = new GainNode(context);
+        let envelope = context.createGain();
         envelope.connect(synthOutput);
         //
-        let osc = new OscillatorNode(context);
+        let osc = context.createOscillator();
         osc.type = "sawtooth";
         osc.connect(envelope);
         //
@@ -169,7 +169,7 @@ var chords = [
     [62, 65, 69],
     [65, 67, 71],
 ];
-var duration = 3000;
+var duration = 2000;
 
 function playChords() {
     chords.forEach((chord, i) => {
@@ -211,7 +211,8 @@ window.clearInterval(loop);
 
 // Add a filter
 
-var filter = new BiquadFilterNode(context);
+//var filter = new BiquadFilterNode(context);
+var filter = context.createBiquadFilter();
 filter.connect(master);
 synthOutput = filter;
 //
@@ -256,7 +257,7 @@ window.clearInterval(loop);
 
 // Avoid distortion caused by clipping
 //
-var compressor = new DynamicsCompressorNode(context);
+var compressor = context.createDynamicsCompressor(context);
 compressor.connect(master);
 //
 filter.disconnect();
