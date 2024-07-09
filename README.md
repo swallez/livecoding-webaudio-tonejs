@@ -2,7 +2,8 @@
 
 This is a musical live coding environment built for a conference talk . This talk was given:
 * at [DevFest Toulouse 2019](https://devfesttoulouse.fr/). The [talk was also recorded](https://www.youtube.com/watch?v=LShM4QzMOxY) (in French)
-* at SunnyTech 2024 in Montpellier, FR
+* at [SunnyTech 2024](https://sunny-tech.io/) in Montpellier, FR
+* at [RivieraDev 2024](https://rivieradev.fr/) in Sophia-Antopilis, FR
 
 The goal of this talk is to walk the audience in 45 minutes through the concepts of [WebAudio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) and [ToneJS](https://github.com/Tonejs/Tone.js) and go from a raw oscillator producing a sine wave to a complete song with drums, bass line, pad and lead melody and effects that can be tuned live with a MIDI controller.
 
